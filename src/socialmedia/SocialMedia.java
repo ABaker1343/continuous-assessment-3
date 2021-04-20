@@ -9,11 +9,11 @@ import java.io.IOException;
  * @author Diogo Pacheco
  * @version 1.0
  */
-public class BadSocialMedia implements SocialMediaPlatform {
+public class SocialMedia implements SocialMediaPlatform {
 
 	@Override
 	public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub this is a change
 		return 0;
 	}
 
