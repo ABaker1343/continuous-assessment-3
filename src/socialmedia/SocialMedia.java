@@ -1,6 +1,7 @@
 package socialmedia;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * BadSocialMedia is a minimally compiling, but non-functioning implementor of
@@ -11,47 +12,93 @@ import java.io.IOException;
  */
 public class SocialMedia implements SocialMediaPlatform {
 
+	ArrayList<Account> accounts;
+	ArrayList<Post> posts;
+
+	/**
+	 * constructor
+	 */
+	SocialMedia(){
+		accounts = new ArrayList<Account>();
+		posts = new ArrayList<Post>();
+	}
+
 	@Override
 	public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
-		// TODO Auto-generated method stub this is a change
-		return 0;
+		// TODO Auto-generated method stub
+		if (handleExists(handle)){
+			throw new IllegalHandleException();
+		}
+		if (isValidHandle(handle)){
+			throw new InvalidHandleException();
+		}
+		Account newAccount = new Account(handle);
+		accounts.add(newAccount);
+		return newAccount.getID();
 	}
 
 	@Override
 	public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
 		// TODO Auto-generated method stub
-		return 0;
+		Account newAccount = new Account(handle, description);
+		accounts.add(newAccount);
+		return newAccount.getID();
 	}
 
 	@Override
 	public void removeAccount(int id) throws AccountIDNotRecognisedException {
 		// TODO Auto-generated method stub
-
+		for (Account a : accounts){
+			if (a.getID() == id){
+				accounts.remove(a);
+				return;
+			}
+		}
+		throw new AccountIDNotRecognisedException();
 	}
 
 	@Override
 	public void removeAccount(String handle) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
-
+		accounts.remove(getAccountByHandle(handle));
+		throw new HandleNotRecognisedException();
 	}
 
 	@Override
 	public void changeAccountHandle(String oldHandle, String newHandle)
 			throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
 		// TODO Auto-generated method stub
+		if (!handleExists(oldHandle)){
+			throw new HandleNotRecognisedException();
+		}
+		if (handleExists(newHandle)){
+			throw new IllegalHandleException();
+		}
+		if (isValidHandle(newHandle)){
+			throw new InvalidHandleException();
+		}
+
+		getAccountByHandle(oldHandle).updateHandle(newHandle);
 
 	}
 
 	@Override
 	public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
+		if (!handleExists(handle)){
+			throw new HandleNotRecognisedException();
+		}
+		getAccountByHandle(handle).updateDescription(description);
 
 	}
 
 	@Override
 	public String showAccount(String handle) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
-		return null;
+		if (!handleExists(handle)){
+			throw new HandleNotRecognisedException();
+		}
+		return getAccountByHandle(handle).showAccount();
 	}
 
 	@Override
@@ -147,4 +194,35 @@ public class SocialMedia implements SocialMediaPlatform {
 
 	}
 
+	private boolean handleExists(String handle){
+		for (Account a : accounts){
+			if (a.getHandle().equals(handle)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isValidHandle(String handle){
+		//no whitespace, no empty, no more than 30 characters
+		if (handle.isEmpty()){
+			return false;
+		}
+		if (handle.contains(" ")){
+			return false;
+		}
+		if (handle.length() > 30){
+			return false;
+		}
+		return true;
+	}
+
+	private Account getAccountByHandle(String handle){
+		for (Account a : accounts){
+			if (a.getHandle().equals(handle)){
+				return a;
+			}
+		}
+		return null;
+	}
 }
