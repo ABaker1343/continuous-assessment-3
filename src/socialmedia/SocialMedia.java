@@ -68,63 +68,122 @@ public class SocialMedia implements SocialMediaPlatform {
 	public void changeAccountHandle(String oldHandle, String newHandle)
 			throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
 		// TODO Auto-generated method stub
-		if (!handleExists(oldHandle)){
-			throw new HandleNotRecognisedException();
-		}
 		if (handleExists(newHandle)){
 			throw new IllegalHandleException();
 		}
-		if (isValidHandle(newHandle)){
+		if (!isValidHandle(newHandle)){
 			throw new InvalidHandleException();
 		}
+		Account accountToChange = getAccountByHandle(oldHandle);
+		if (accountToChange == null){
+			throw new HandleNotRecognisedException();
+		}
 
-		getAccountByHandle(oldHandle).updateHandle(newHandle);
+		accountToChange.updateHandle(newHandle);
 
 	}
 
 	@Override
 	public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
-		if (!handleExists(handle)){
+		Account accountToChange = getAccountByHandle(handle);
+		if (accountToChange == null){
 			throw new HandleNotRecognisedException();
 		}
-		getAccountByHandle(handle).updateDescription(description);
+
+		accountToChange.updateDescription(handle);
 
 	}
 
 	@Override
 	public String showAccount(String handle) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
-		if (!handleExists(handle)){
+		Account account = getAccountByHandle(handle);
+		if (account == null){
 			throw new HandleNotRecognisedException();
 		}
-		return getAccountByHandle(handle).showAccount();
+		return account.showAccount();
 	}
 
 	@Override
 	public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
 		// TODO Auto-generated method stub
-		return 0;
+		Account poster = getAccountByHandle(handle);
+		if (poster == null){
+			throw new HandleNotRecognisedException();
+		}
+		if(!isValidPost(message)){
+			throw new InvalidPostException();
+		}
+		Post newPost = new Post(poster, message);
+		posts.add(newPost);
+		poster.addPost(newPost);
+		return newPost.getID();
 	}
 
 	@Override
 	public int endorsePost(String handle, int id)
 			throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
 		// TODO Auto-generated method stub
-		return 0;
+		// EP@exampleuser:Endorsed message
+		Account endorser = getAccountByHandle(handle);
+		if (endorser == null){
+			throw new HandleNotRecognisedException();
+		}
+		Post postToEndorse = getPostByID(id);
+		if(postToEndorse == null){
+			throw new PostIDNotRecognisedException();
+		}
+		if (postToEndorse instanceof Endorsement || postToEndorse instanceof EmptyPost){
+			throw new NotActionablePostException();
+		}
+		Endorsement newEndorsement = new Endorsement(endorser, postToEndorse);
+		postToEndorse.addEndorsements(newEndorsement);
+		posts.add(newEndorsement);
+		endorser.addPost(newEndorsement);
+		return newEndorsement.getID();
 	}
 
 	@Override
 	public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
 			PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
 		// TODO Auto-generated method stub
-		return 0;
+		Account commenter = getAccountByHandle(handle);
+		if(commenter == null){
+			throw new HandleNotRecognisedException();
+		}
+		Post postToComment = getPostByID(id);
+		if(postToComment == null){
+			throw new PostIDNotRecognisedException();
+		}
+		if (postToComment instanceof Endorsement || postToComment instanceof EmptyPost){
+			throw new NotActionablePostException();
+		}
+		if(!isValidPost(message)){
+			throw new InvalidPostException();
+		}
+		Comment newComment = new Comment(commenter, message, postToComment);
+		posts.add(newComment);
+		postToComment.addComment(newComment);
+		commenter.addPost(newComment);
+		return newComment.getID();
 	}
 
 	@Override
 	public void deletePost(int id) throws PostIDNotRecognisedException {
 		// TODO Auto-generated method stub
-
+		Post postToRemove = getPostByID(id);
+		if (postToRemove == null){
+			throw new PostIDNotRecognisedException();
+		}
+		postToRemove.deleteEndorsements();
+		int index = posts.indexOf(postToRemove);
+		EmptyPost newEmptyPost = new EmptyPost(postToRemove.getID());
+		posts.set(index, newEmptyPost);
+		ArrayList<Comment> oldComments = postToRemove.getComments();
+		for (Comment c : oldComments){
+			c.setOriginalPost(newEmptyPost);
+		}
 	}
 
 	@Override
@@ -217,10 +276,29 @@ public class SocialMedia implements SocialMediaPlatform {
 		return true;
 	}
 
+	private boolean isValidPost(String content){
+		if(content.isEmpty()){
+			return false;
+		}
+		if (content.length() > 100){
+			return false;
+		}
+		return true;
+	}
+
 	private Account getAccountByHandle(String handle){
 		for (Account a : accounts){
 			if (a.getHandle().equals(handle)){
 				return a;
+			}
+		}
+		return null;
+	}
+
+	private Post getPostByID(int id){
+		for (Post p : posts){
+			if (p.getID() == id){
+				return p;
 			}
 		}
 		return null;
