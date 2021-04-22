@@ -212,7 +212,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		if (postToShow == null){
 			throw new PostIDNotRecognisedException();
 		}
-		if (postToShow == null){
+		if (postToShow instanceof EmptyPost || postToShow instanceof Endorsement){
 			throw new NotActionablePostException();
 		}
 		StringBuilder sb = new StringBuilder(postToShow.showWithChildren(0));
