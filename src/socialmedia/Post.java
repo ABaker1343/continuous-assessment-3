@@ -1,12 +1,13 @@
 package socialmedia;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Post {
-    int postID;
-    int posterID;
-    String accountHandle;
-    String content;
+public class Post implements Serializable{
+    protected int postID;
+    protected int posterID;
+    protected String accountHandle;
+    protected String content;
     static int nextID;
 
     /**
@@ -35,6 +36,18 @@ public class Post {
     }
     public void deleteEndorsements(){
 
+    }
+
+    public int getNumEndorsements(){
+        return -1;
+    }
+
+    public String show(){
+        return "";
+    }
+
+    public String showWithChildren(int indent){
+        return show();
     }
 
     public ArrayList<Comment> getComments(){

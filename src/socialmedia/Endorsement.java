@@ -17,4 +17,15 @@ public class Endorsement extends Post{
     protected void setContent(String content){
         this.content = "EP@" + this.originalPost.getAccountHandle() + this.originalPost.getContent();
     }
+
+    @Override
+    public String show(){
+        String outString;
+        
+        outString = "ID: " + postID + "\n" +
+        "Account: " + accountHandle + "\n" +
+        content;
+
+        return outString;
+    }
 }

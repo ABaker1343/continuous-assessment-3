@@ -33,6 +33,44 @@ public class Comment extends Post{
     }
 
     @Override
+    public String show(){
+        String outString;
+        
+        outString = "ID: " + postID + "\n" +
+        "Account: " + accountHandle + "\n" +
+        "No. Endorsements: " + endorsements.size() + " | No. Comments: " + comments.size() + "\n" +
+        content;
+
+        return outString;
+    }
+
+    @Override
+    public int getNumEndorsements(){
+        return endorsements.size();
+    }
+
+    @Override
+    public String showWithChildren(int indent){
+        String returnString = show() + "\n";
+
+        for (Comment c : comments){
+            
+            for (int i = 0; i< indent; i++){
+                returnString += " ";
+            }
+            returnString += "|\n";
+            for (int i = 0; i< indent; i++){
+                returnString += " ";
+            }
+            returnString += "|";
+
+            returnString += c.showWithChildren(++indent);
+        }
+
+        return returnString;
+    }
+
+    @Override
     public ArrayList<Comment> getComments() {
         // TODO Auto-generated method stub
         return comments;

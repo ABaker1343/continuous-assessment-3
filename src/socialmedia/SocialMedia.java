@@ -1,7 +1,13 @@
 package socialmedia;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
+import java.lang.StringBuilder;
 
 /**
  * BadSocialMedia is a minimally compiling, but non-functioning implementor of
@@ -18,7 +24,7 @@ public class SocialMedia implements SocialMediaPlatform {
 	/**
 	 * constructor
 	 */
-	SocialMedia(){
+	public SocialMedia(){
 		accounts = new ArrayList<Account>();
 		posts = new ArrayList<Post>();
 	}
@@ -141,6 +147,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		postToEndorse.addEndorsements(newEndorsement);
 		posts.add(newEndorsement);
 		endorser.addPost(newEndorsement);
+		getAccountByHandle(postToEndorse.getAccountHandle()).increaseEndorsements();
 		return newEndorsement.getID();
 	}
 
@@ -180,6 +187,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		int index = posts.indexOf(postToRemove);
 		EmptyPost newEmptyPost = new EmptyPost(postToRemove.getID());
 		posts.set(index, newEmptyPost);
+		getAccountByHandle(postToRemove.getAccountHandle()).removePost(postToRemove);
 		ArrayList<Comment> oldComments = postToRemove.getComments();
 		for (Comment c : oldComments){
 			c.setOriginalPost(newEmptyPost);
@@ -189,67 +197,157 @@ public class SocialMedia implements SocialMediaPlatform {
 	@Override
 	public String showIndividualPost(int id) throws PostIDNotRecognisedException {
 		// TODO Auto-generated method stub
-		return null;
+		Post postToShow = getPostByID(id);
+		if (postToShow == null){
+			throw new PostIDNotRecognisedException();
+		}
+		return postToShow.show();
 	}
 
 	@Override
 	public StringBuilder showPostChildrenDetails(int id)
 			throws PostIDNotRecognisedException, NotActionablePostException {
 		// TODO Auto-generated method stub
-		return null;
+		Post postToShow = getPostByID(id);
+		if (postToShow == null){
+			throw new PostIDNotRecognisedException();
+		}
+		if (postToShow == null){
+			throw new NotActionablePostException();
+		}
+		StringBuilder sb = new StringBuilder(postToShow.showWithChildren(0));
+		return sb;
 	}
 
 	@Override
 	public int getNumberOfAccounts() {
 		// TODO Auto-generated method stub
-		return 0;
+		return accounts.size();
 	}
 
 	@Override
 	public int getTotalOriginalPosts() {
 		// TODO Auto-generated method stub
-		return 0;
+		int numOriginalPosts = 0;
+		for (Post p : posts){
+			if (p instanceof Original){
+				numOriginalPosts++;
+			}
+		}
+		return numOriginalPosts;
 	}
 
 	@Override
 	public int getTotalEndorsmentPosts() {
 		// TODO Auto-generated method stub
-		return 0;
+		int numEndorsementPosts = 0;
+		for (Post p : posts){
+			if (p instanceof Endorsement){
+				numEndorsementPosts++;
+			}
+		}
+		return numEndorsementPosts;
 	}
 
 	@Override
 	public int getTotalCommentPosts() {
 		// TODO Auto-generated method stub
-		return 0;
+		int numCommentsPosts = 0;
+		for (Post p : posts){
+			if (p instanceof Comment){
+				numCommentsPosts++;
+			}
+		}
+		return numCommentsPosts;
 	}
 
 	@Override
 	public int getMostEndorsedPost() {
 		// TODO Auto-generated method stub
-		return 0;
+		Post mostEndorsed = null;
+		boolean firstFound = false;
+		for (Post p : posts){
+			if (p instanceof Original || p instanceof Comment){
+				if (firstFound){
+					if (p.getNumEndorsements() > mostEndorsed.getNumEndorsements()){
+						mostEndorsed = p;
+					}
+				}
+				else{
+					mostEndorsed = p;
+				}
+			}
+		}
+		return mostEndorsed.getID();
 	}
 
 	@Override
 	public int getMostEndorsedAccount() {
 		// TODO Auto-generated method stub
-		return 0;
+		Account mostEndorsed = null;
+		boolean firstFound = false;
+		for (Account a : accounts){
+			if (firstFound){
+				if (a.getEndorseCount() > mostEndorsed.getEndorseCount()){
+					mostEndorsed = a;
+				}
+			}
+			else{
+				mostEndorsed = a;
+			}
+		}
+		return mostEndorsed.getID();
 	}
 
 	@Override
 	public void erasePlatform() {
 		// TODO Auto-generated method stub
+		posts.clear();
+		accounts.clear();
 
 	}
 
 	@Override
 	public void savePlatform(String filename) throws IOException {
 		// TODO Auto-generated method stub
+		try{
+			Object arr[] = new Object[2];
+			arr[0] = accounts;
+			arr[1] = posts;
+			FileOutputStream fileOut = new FileOutputStream(filename);
+			ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
+			objOut.writeObject(arr);
+			objOut.close();
+		}
+		catch(IOException e){
+			throw e;
+		}
+		catch (Exception e){
+			System.out.println("something went wrong, man");
+		}
 
 	}
 
 	@Override
 	public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
+		try{
+			FileInputStream inStream = new FileInputStream(filename);
+			ObjectInputStream objIn = new ObjectInputStream(inStream);
+			Object arr[] = (Object[])objIn.readObject();
+			accounts = (ArrayList<Account>)arr[0];
+			posts = (ArrayList<Post>)arr[1];
+			objIn.close();
+		}
+		catch(IOException e){
+			throw e;
+		}
+		catch(ClassNotFoundException e){
+			throw e;
+		}
+		catch(Exception e){
+			System.out.println("something went wrong, man");
+		}
 
 	}
 

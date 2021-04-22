@@ -1,8 +1,9 @@
 package socialmedia;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Account {
+public class Account implements Serializable{
     int accountID;
     String handle;
     String description;
@@ -48,6 +49,10 @@ public class Account {
         return posts;
     }
 
+    public void increaseEndorsements(){
+        endorseCount++;
+    }
+
     public String showAccount(){
         return "" +
         "ID: " + accountID + "\n" +
@@ -78,5 +83,19 @@ public class Account {
     }
     private void setDescription(String description){
         this.description = description;
+    }
+
+    public int getEndorseCount() {
+        int numEndorsements = 0;
+        for (Post p : posts){
+            if(p instanceof Original || p instanceof Comment){
+                numEndorsements += p.getNumEndorsements();
+            }
+        }
+        return endorseCount;
+    }
+
+    public void removePost(Post p){
+        posts.remove(p);
     }
 }
