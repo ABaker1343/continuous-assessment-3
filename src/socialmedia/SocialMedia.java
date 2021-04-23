@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.io.File;
 
 import java.lang.StringBuilder;
 
@@ -315,7 +316,7 @@ public class SocialMedia implements SocialMediaPlatform {
 			Object arr[] = new Object[2];
 			arr[0] = accounts;
 			arr[1] = posts;
-			FileOutputStream fileOut = new FileOutputStream("platforms/" +  filename + ".obj");
+			FileOutputStream fileOut = new FileOutputStream( filename + ".obj");
 			ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
 			objOut.writeObject(arr);
 			objOut.close();
@@ -333,7 +334,7 @@ public class SocialMedia implements SocialMediaPlatform {
 	public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		try{
-			FileInputStream inStream = new FileInputStream("platforms/" + filename + ".obj");
+			FileInputStream inStream = new FileInputStream(filename + ".obj");
 			ObjectInputStream objIn = new ObjectInputStream(inStream);
 			Object arr[] = (Object[])objIn.readObject();
 			accounts = (ArrayList<Account>)arr[0];
