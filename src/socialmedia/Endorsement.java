@@ -10,10 +10,17 @@ public class Endorsement extends Post{
         setEndorsementContent();
     }
 
+    /**
+     * sets the post that this Endorsement is Endorsing
+     * @param originalPost
+     */
     public void setOriginalPost(Post originalPost) {
         this.originalPost = originalPost;
     }
 
+    /**
+     * creates the endorsement content
+     */
     protected void setEndorsementContent(){
         this.content = "EP@" + this.originalPost.getAccountHandle() +": "+ this.originalPost.getContent();
     }

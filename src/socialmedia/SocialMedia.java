@@ -353,6 +353,11 @@ public class SocialMedia implements SocialMediaPlatform {
 
 	}
 
+	/**
+	 * checks if a given handle exists within the system
+	 * @param handle
+	 * @return true is the handle exists
+	 */
 	private boolean handleExists(String handle){
 		for (Account a : accounts){
 			if (a.getHandle().equals(handle)){
@@ -362,6 +367,11 @@ public class SocialMedia implements SocialMediaPlatform {
 		return false;
 	}
 
+	/**
+	 * checks if a given handle is valid
+	 * @param handle
+	 * @return true is the handle is valid
+	 */
 	private boolean isValidHandle(String handle){
 		//no whitespace, no empty, no more than 30 characters
 		if (handle.isEmpty()){
@@ -376,6 +386,11 @@ public class SocialMedia implements SocialMediaPlatform {
 		return true;
 	}
 
+	/**
+	 * checks if a post is valid
+	 * @param content
+	 * @return true is the post is valid
+	 */
 	private boolean isValidPost(String content){
 		if(content.isEmpty()){
 			return false;
@@ -386,6 +401,12 @@ public class SocialMedia implements SocialMediaPlatform {
 		return true;
 	}
 
+	/**
+	 * gets an account by the given handle
+	 * @param handle
+	 * @return Account pointer
+	 * @return null if the account doesnt exist
+	 */
 	private Account getAccountByHandle(String handle){
 		for (Account a : accounts){
 			if (a.getHandle().equals(handle)){
@@ -395,6 +416,12 @@ public class SocialMedia implements SocialMediaPlatform {
 		return null;
 	}
 
+	/**
+	 * gets a post by ID
+	 * @param id
+	 * @return Post pointer to a post
+	 * @return null if the post doesnt exist
+	 */
 	private Post getPostByID(int id){
 		for (Post p : posts){
 			if (p.getID() == id){

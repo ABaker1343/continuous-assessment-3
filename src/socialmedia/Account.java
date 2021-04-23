@@ -33,26 +33,49 @@ public class Account implements Serializable{
         this(handle, "");
     }
 
+    /**
+     * updates the handle for this user
+     * @param handle
+     */
     public void updateHandle(String handle){
         setHandle(handle);
     }
 
+    /**
+     * updates the description for this user
+     * @param description
+     */
     public void updateDescription(String description){
         setDescription(description);
     }
 
+    /**
+     * adds a post to this user
+     * @param post
+     */
     public void addPost(Post post){
         posts.add(post);
     }
 
+    /**
+     * returns an ArrayList of posts attached to this account
+     * @return ArrayList of posts attached to this account
+     */
     public ArrayList<Post> getPosts(){
         return posts;
     }
 
+    /**
+     * increases the endorsement count by 1
+     */
     public void increaseEndorsements(){
         endorseCount++;
     }
 
+    /**
+     * returns a string representing an account
+     * @return
+     */
     public String showAccount(){
         return "" +
         "ID: " + accountID + "\n" +

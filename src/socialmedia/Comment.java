@@ -14,10 +14,17 @@ public class Comment extends Post{
         endorsements = new ArrayList<Endorsement>();
     }
 
+    /**
+     * sets the parent post for this comment
+     * @param originalPost
+     */
     public void setOriginalPost(Post originalPost) {
         this.originalPost = originalPost;
     }
 
+    /**
+     * adds a comment to this comment
+     */
     public void addComment(Comment comment){
         comments.add(comment);
     }
