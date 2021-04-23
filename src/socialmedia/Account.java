@@ -95,6 +95,10 @@ public class Account implements Serializable{
         return endorseCount;
     }
 
+    public int getPostCount(){
+        return posts.size();
+    }
+
     public void removePost(Post p){
         posts.remove(p);
     }

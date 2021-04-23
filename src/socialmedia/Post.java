@@ -23,8 +23,8 @@ public class Post implements Serializable{
      */
     Post(Account poster, String content){
         setID();
-        setPosterID(poster.getID());
-        setAccountHandle(poster.getHandle());
+        if (poster != null) setPosterID(poster.getID());
+        if (poster != null) setAccountHandle(poster.getHandle());
         setContent(content);
     }
 
@@ -37,17 +37,20 @@ public class Post implements Serializable{
     public void deleteEndorsements(){
 
     }
+    public ArrayList<Endorsement> getEndorsements(){
+        return null;
+    }
 
     public int getNumEndorsements(){
         return -1;
     }
 
-    public String show(){
+    public String show(int indent){
         return "";
     }
 
     public String showWithChildren(int indent){
-        return show();
+        return show(indent);
     }
 
     public ArrayList<Comment> getComments(){

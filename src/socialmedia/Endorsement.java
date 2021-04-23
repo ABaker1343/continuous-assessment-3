@@ -7,24 +7,33 @@ public class Endorsement extends Post{
     Endorsement(Account poster, Post originalPost){
         super(poster, originalPost.getContent());
         setOriginalPost(originalPost);
+        setEndorsementContent();
     }
 
     public void setOriginalPost(Post originalPost) {
         this.originalPost = originalPost;
     }
 
-    @Override
-    protected void setContent(String content){
-        this.content = "EP@" + this.originalPost.getAccountHandle() + this.originalPost.getContent();
+    protected void setEndorsementContent(){
+        this.content = "EP@" + this.originalPost.getAccountHandle() +": "+ this.originalPost.getContent();
     }
 
     @Override
-    public String show(){
-        String outString;
+    public String show(int indent){
+        String outString = "";
         
-        outString = "ID: " + postID + "\n" +
-        "Account: " + accountHandle + "\n" +
-        content;
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += "ID: " + postID + "\n";
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += "Account: " + accountHandle + "\n";
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += content;
 
         return outString;
     }

@@ -33,13 +33,22 @@ public class Comment extends Post{
     }
 
     @Override
-    public String show(){
-        String outString;
+    public String show(int indent){
+        String outString = "";
         
-        outString = "ID: " + postID + "\n" +
-        "Account: " + accountHandle + "\n" +
-        "No. Endorsements: " + endorsements.size() + " | No. Comments: " + comments.size() + "\n" +
-        content;
+        outString += "ID: " + postID + "\n";
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += "Account: " + accountHandle + "\n";
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += "No. Endorsements: " + endorsements.size() + " | No. Comments: " + comments.size() + "\n";
+        for (int i = 0; i < indent; i++){
+            outString += "    ";
+        }
+        outString += content;
 
         return outString;
     }
@@ -51,20 +60,20 @@ public class Comment extends Post{
 
     @Override
     public String showWithChildren(int indent){
-        String returnString = show() + "\n";
+        String returnString = show(indent) + "\n";
 
         for (Comment c : comments){
             
             for (int i = 0; i< indent; i++){
-                returnString += " ";
+                returnString += "    ";
             }
             returnString += "|\n";
             for (int i = 0; i< indent; i++){
-                returnString += " ";
+                returnString += "    ";
             }
             returnString += "|";
 
-            returnString += c.showWithChildren(++indent);
+            returnString += c.showWithChildren(indent++);
         }
 
         return returnString;
@@ -74,5 +83,10 @@ public class Comment extends Post{
     public ArrayList<Comment> getComments() {
         // TODO Auto-generated method stub
         return comments;
+    }
+
+    @Override
+    public ArrayList<Endorsement> getEndorsements(){
+        return endorsements;
     }
 }

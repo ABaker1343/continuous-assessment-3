@@ -35,7 +35,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		if (handleExists(handle)){
 			throw new IllegalHandleException();
 		}
-		if (isValidHandle(handle)){
+		if (!isValidHandle(handle)){
 			throw new InvalidHandleException();
 		}
 		Account newAccount = new Account(handle);
@@ -121,7 +121,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		if(!isValidPost(message)){
 			throw new InvalidPostException();
 		}
-		Post newPost = new Post(poster, message);
+		Post newPost = new Original(poster, message);
 		posts.add(newPost);
 		poster.addPost(newPost);
 		return newPost.getID();
@@ -183,9 +183,10 @@ public class SocialMedia implements SocialMediaPlatform {
 		if (postToRemove == null){
 			throw new PostIDNotRecognisedException();
 		}
+		posts.removeAll(postToRemove.getEndorsements());
 		postToRemove.deleteEndorsements();
 		int index = posts.indexOf(postToRemove);
-		EmptyPost newEmptyPost = new EmptyPost(postToRemove.getID());
+		EmptyPost newEmptyPost = new EmptyPost(postToRemove);
 		posts.set(index, newEmptyPost);
 		getAccountByHandle(postToRemove.getAccountHandle()).removePost(postToRemove);
 		ArrayList<Comment> oldComments = postToRemove.getComments();
@@ -201,7 +202,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		if (postToShow == null){
 			throw new PostIDNotRecognisedException();
 		}
-		return postToShow.show();
+		return postToShow.show(0);
 	}
 
 	@Override
@@ -212,7 +213,7 @@ public class SocialMedia implements SocialMediaPlatform {
 		if (postToShow == null){
 			throw new PostIDNotRecognisedException();
 		}
-		if (postToShow instanceof EmptyPost || postToShow instanceof Endorsement){
+		if (postToShow instanceof Endorsement){
 			throw new NotActionablePostException();
 		}
 		StringBuilder sb = new StringBuilder(postToShow.showWithChildren(0));
@@ -314,7 +315,7 @@ public class SocialMedia implements SocialMediaPlatform {
 			Object arr[] = new Object[2];
 			arr[0] = accounts;
 			arr[1] = posts;
-			FileOutputStream fileOut = new FileOutputStream(filename);
+			FileOutputStream fileOut = new FileOutputStream("platforms/" +  filename + ".obj");
 			ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
 			objOut.writeObject(arr);
 			objOut.close();
@@ -332,7 +333,7 @@ public class SocialMedia implements SocialMediaPlatform {
 	public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		try{
-			FileInputStream inStream = new FileInputStream(filename);
+			FileInputStream inStream = new FileInputStream("platforms/" + filename + ".obj");
 			ObjectInputStream objIn = new ObjectInputStream(inStream);
 			Object arr[] = (Object[])objIn.readObject();
 			accounts = (ArrayList<Account>)arr[0];
